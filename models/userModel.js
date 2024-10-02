@@ -8,6 +8,14 @@ const User = sequelize.define('User', {
     autoIncrement: true,
     allowNull: false
   },
+  role:{
+    type: DataTypes.ENUM('admin', 'user'),
+    allowNull: false,
+    defaultValue: 'user',
+    validate: {
+      isIn: [['admin', 'user']], 
+    }
+  },
   firstName: {
     type: DataTypes.STRING,
     allowNull: false,

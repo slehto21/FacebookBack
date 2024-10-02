@@ -29,4 +29,51 @@ export const createUser = async (req, res) => {
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
-}; 
+};
+
+export const deleteUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Check if the user is authorized to delete the user
+        if (req.user.id !== parseInt(id)) {
+            return res.status(403).json({ message: "You are not authorized to delete this user" });
+        }
+
+        await User.destroy({ where: { id } });
+        res.status(200).json({ message: "User deleted" });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export const updateUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (req.user.id !== parseInt(id)) {
+            return res.status(403).json({ message: "You are not authorized to update this user" });
+        }
+
+        const { password, ...updatedFields } = req.body;
+        await User.update(updatedFields, {
+            where: { id },
+            fields: Object.keys(updatedFields)
+        });
+        res.status(200).json({ message: "User updated" });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export const updateUserPassword = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { password } = req.body;
+        const hashedPassword = await bcrypt.hash(password, 10);
+        await User.update({ password: hashedPassword }, { where: { id } });
+        res.status(200).json({ message: "Password updated" });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
