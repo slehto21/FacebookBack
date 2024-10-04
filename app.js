@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import syncDatabase from './models/sync.js';
 import authRoutes from './routes/authRoutes.js';
 import { authenticateJWT } from './middlewares/authMiddleware.js';
@@ -6,6 +7,7 @@ import { authenticateJWT } from './middlewares/authMiddleware.js';
 const app = express();
 
 app.use(express.json());
+app.use(cors());
 app.use('/auth', authRoutes);
 
 app.get('/protected', authenticateJWT, (req, res) => {
