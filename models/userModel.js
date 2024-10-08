@@ -45,12 +45,19 @@ const User = sequelize.define('User', {
       len: [8, 100], 
     }
   },
-  age: {
-    type: DataTypes.INTEGER,
-    allowNull: false,    
+  birthdate: {
+    type: DataTypes.DATE,
+    allowNull: false,
     validate: {
-      isInt: true, 
-      min: 12, 
+      isDate: true,
+      isOldEnough(value) {
+        const today = new Date();
+        const birthdate = new Date(value);
+        const age = today.getFullYear() - birthdate.getFullYear();
+        if (age < 13) {
+          throw new Error('User must be at least 13 years old');
+        }
+    }
     }
   },
   createdAt: {
